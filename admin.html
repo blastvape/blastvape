@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <title>Hello, World!</title>
+</head>
+<body>
+  <h1>
+  </h1>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLAST VAPE - Админ Панель</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #000000;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #000000 0%, #1a0000 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(26, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #800020;
+            box-shadow: 0 0 30px rgba(128, 0, 32, 0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #800020, #ff0000, #800020);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(128, 0, 32, 0.5);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #800020, #ff0000);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #ff0000, #800020);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: rgba(128, 0, 32, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #800020;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ff6666;
+        }
+
+        .stat-label {
+            color: #ff9999;
+            font-size: 14px;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .orders-table th {
+            background: linear-gradient(135deg, #800020, #ff0000);
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .orders-table td {
+            padding: 15px;
+            border-bottom: 1px solid #800020;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .orders-table tr:hover td {
+            background: rgba(128, 0, 32, 0.2);
+        }
+
+        .contact-link {
+            color: #ff6666;
+            text-decoration: none;
+        }
+
+        .contact-link:hover {
+            color: #ff0000;
+            text-decoration: underline;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 40px;
+            color: #ff9999;
+            font-size: 18px;
+        }
+
+        .timestamp {
+            color: #999;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            .orders-table {
+                font-size: 14px;
+            }
+            
+            .orders-table th,
+            .orders-table td {
+                padding: 10px 5px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>BLAST VAPE - АДМИН ПАНЕЛЬ</h1>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="loadOrders()">🔄 Обновить</button>
+            <button class="btn" onclick="clearAllOrders()">🗑️ Очистить все</button>
+            <button class="btn" onclick="exportOrders()">📤 Экспорт</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalOrders">0</div>
+                <div class="stat-label">Всего заказов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayOrders">0</div>
+                <div class="stat-label">Сегодня</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="weekOrders">0</div>
+                <div class="stat-label">За неделю</div>
+            </div>
+        </div>
+
+        <div id="ordersContainer">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th width="20%">👤 Имя</th>
+                        <th width="30%">📞 Контакты</th>
+                        <th width="50%">📦 Пожелания к заказу</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTable">
+                    <!-- Заказы будут здесь -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Хранилище заказов (в реальном проекте заменить на базу данных)
+        let orders = JSON.parse(localStorage.getItem('blastVapeOrders')) || [];
+
+        function loadOrders() {
+            const ordersTable = document.getElementById('ordersTable');
+            const totalOrders = document.getElementById('totalOrders');
+            const todayOrders = document.getElementById('todayOrders');
+            const weekOrders = document.getElementById('weekOrders');
+
+            // Обновляем статистику
+            totalOrders.textContent = orders.length;
+            
+            const today = new Date().toDateString();
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            
+            const todayCount = orders.filter(order => {
+                return new Date(order.timestamp).toDateString() === today;
+            }).length;
+            
+            const weekCount = orders.filter(order => {
+                return new Date(order.timestamp) >= weekAgo;
+            }).length;
+            
+            todayOrders.textContent = todayCount;
+            weekOrders.textContent = weekCount;
+
+            // Очищаем таблицу
+            ordersTable.innerHTML = '';
+
+            if (orders.length === 0) {
+                ordersTable.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="no-orders">
+                            📭 Нет заказов
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Сортируем по дате (новые сверху)
+            const sortedOrders = [...orders].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            // Заполняем таблицу
+            sortedOrders.forEach((order, index) => {
+                const row = document.createElement('tr');
+                
+                // Определяем тип контакта и создаем ссылку
+                let contactHtml = order.contacts;
+                if (order.contacts.includes('@')) {
+                    contactHtml = `<a href="https://t.me/${order.contacts.replace('@', '')}" class="contact-link" target="_blank">${order.contacts}</a>`;
+                } else if (order.contacts.includes('+')) {
+                    contactHtml = `<a href="tel:${order.contacts}" class="contact-link">${order.contacts}</a>`;
+                }
+                
+                row.innerHTML = `
+                    <td>
+                        <strong>${order.name}</strong>
+                        <div class="timestamp">${new Date(order.timestamp).toLocaleString()}</div>
+                    </td>
+                    <td>${contactHtml}</td>
+                    <td>${order.wishes}</td>
+                `;
+                
+                ordersTable.appendChild(row);
+            });
+        }
+
+        function clearAllOrders() {
+            if (confirm('Точно очистить все заказы? Это действие нельзя отменить!')) {
+                orders = [];
+                localStorage.setItem('blastVapeOrders', JSON.stringify(orders));
+                loadOrders();
+                alert('Все заказы очищены!');
+            }
+        }
+
+        function exportOrders() {
+            if (orders.length === 0) {
+                alert('Нет заказов для экспорта!');
+                return;
+            }
+
+            let csv = 'Имя,Контакты,Пожелания,Дата\n';
+            orders.forEach(order => {
+                csv += `"${order.name}","${order.contacts}","${order.wishes}","${new Date(order.timestamp).toLocaleString()}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `blast_vape_orders_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Функция для добавления нового заказа (для тестирования)
+        function addTestOrder() {
+            const testOrders = [
+                { name: 'Иван Петров', contacts: '@ivanpetrov', wishes: 'BLAST 5000 черный, срочно нужно' },
+                { name: 'Алексей', contacts: '+375291234567', wishes: 'Ищу мощный вейп с долгим сроком работы батареи' },
+                { name: 'Mike Johnson', contacts: '@mikej', wishes: 'Vape Pro X red color, express delivery' }
+            ];
+
+            testOrders.forEach(order => {
+                orders.push({
+                    ...order,
+                    timestamp: new Date().toISOString()
+                });
+            });
+
+            localStorage.setItem('blastVapeOrders', JSON.stringify(orders));
+            loadOrders();
+        }
+
+        // Автообновление каждые 30 секунд
+        setInterval(loadOrders, 30000);
+
+        // Загружаем заказы при старте
+        loadOrders();
+
+        // Для теста - раскомментируй строку ниже чтобы добавить тестовые заказы
+        // addTestOrder();
+    </script>
+</body>
+</html>
